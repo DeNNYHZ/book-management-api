@@ -1,162 +1,216 @@
 package main
 
 import (
-	"fmt"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"os"
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 	"go-fiber-postgres/models"
 	"go-fiber-postgres/storage"
 	"gorm.io/gorm"
-	"log"
-	"net/http"
-	"os"
 )
 
-type Book struct {
-	Author    string `json:"author"`
-	Title     string `json:"title"`
-	Publisher string `json:"publisher"`
-}
-
+// Repository contains database interactions
 type Repository struct {
 	DB *gorm.DB
 }
 
-func (r *Repository) CreateBooks(context *fiber.Ctx) error {
-	var books []Book
+// CreateBook creates a new book in the database
+func (r *Repository) CreateBook(c *fiber.Ctx) error {
+	var books []models.Book
 
-	err := context.BodyParser(&books)
-	if err != nil {
-		context.Status(http.StatusUnprocessableEntity).JSON(
-			&fiber.Map{"message": "request failed"})
-		return err
+	// Parse the request body to handle multiple books
+	if err := c.BodyParser(&books); err != nil {
+		logrus.WithError(err).Error("Failed to parse request body")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid input",
+		})
 	}
 
-	for _, book := range books {
-		err := r.DB.Create(&book).Error
-		if err != nil {
-			context.Status(http.StatusBadRequest).JSON(
-				&fiber.Map{"message": "could not create book"})
-			return err
+	// Validate each book
+	for i, book := range books {
+		if err := book.Validate(); err != nil {
+			logrus.WithError(err).Error("Validation failed for book", i)
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": err.Error(),
+			})
 		}
 	}
 
-	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "books have been added"})
-	return nil
-}
-
-func (r *Repository) DeleteBook(context *fiber.Ctx) error {
-	// Use models.Book here, assuming that's the correct type in your models package
-	bookModel := models.Book{}
-	id := context.Params("id")
-	if id == "" {
-		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{
-			"message": "id cannot be empty",
+	// Insert books into the database
+	if err := r.DB.Create(&books).Error; err != nil {
+		logrus.WithError(err).Error("Failed to create books")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to create books",
 		})
-		return nil
 	}
 
-	err := r.DB.Delete(&bookModel, id)
-	// Pass a pointer to bookModel
-
-	if err.Error != nil {
-		context.Status(http.StatusBadRequest).JSON(&fiber.Map{
-			"message": "could not delete book",
-		})
-		return err.Error
-	}
-	context.Status(http.StatusOK).JSON(&fiber.Map{
-
-		"message": "book delete successfully",
-	})
-	return nil
-}
-
-func (r *Repository) GetBooks(context *fiber.Ctx) error {
-	var books []Book
-	err := r.DB.Find(&books).Error
-	if err != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "could not get books"})
-		return err
-	}
-
-	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "books fetched successfully",
+	// Response
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"message": "Books created successfully",
 		"data":    books,
 	})
-	return nil
 }
 
-func (r *Repository) GetBookByID(context *fiber.Ctx) error {
+// DeleteBook deletes a book by ID from the database
+func (r *Repository) DeleteBook(c *fiber.Ctx) error {
+	id := c.Params("id")
 
-	id := context.Params("id")
-
-	// Use models.Book
-	bookModel := models.Book{}
-	if id == "" {
-		context.Status(http.StatusInternalServerError).JSON(&fiber.Map{
-			"message": "id cannot be empty",
+	if err := r.DB.Delete(&models.Book{}, id).Error; err != nil {
+		logrus.WithError(err).Error("Failed to delete book")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to delete book",
 		})
-		return nil
 	}
 
-	fmt.Println("the ID is",
-		id)
-
-	err := r.DB.Where("id = ?", id).First(&bookModel).Error
-	// Pass a pointer to bookModel
-	if err != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "could not get the book"})
-		return err
-	}
-	context.Status(http.StatusOK).JSON(&fiber.Map{
-
-		"message": "book id fetched successfully",
-		"data":    bookModel,
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Book deleted successfully",
 	})
-	return nil
-
 }
 
+// GetBooks retrieves all books from the database with pagination
+func (r *Repository) GetBooks(c *fiber.Ctx) error {
+	// Retrieve query parameters
+	pageStr := c.Query("page", "1")
+	limitStr := c.Query("limit", "10")
+
+	// Convert page and limit from strings to integers
+	page, err := strconv.Atoi(pageStr)
+	if err != nil {
+		logrus.WithError(err).Error("Invalid page number")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid page number",
+		})
+	}
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		logrus.WithError(err).Error("Invalid limit number")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid limit number",
+		})
+	}
+
+	// Ensure page and limit are positive
+	if page < 1 || limit < 1 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Page and limit must be greater than 0",
+		})
+	}
+
+	var books []models.Book
+	var totalCount int64
+
+	// Get the total count of books
+	if err := r.DB.Model(&models.Book{}).Count(&totalCount).Error; err != nil {
+		logrus.WithError(err).Error("Failed to get total count of books")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to fetch books count",
+		})
+	}
+
+	// Fetch books from the database with pagination
+	if err := r.DB.Offset((page - 1) * limit).Limit(limit).Find(&books).Error; err != nil {
+		logrus.WithError(err).Error("Failed to fetch books")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to fetch books",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Books fetched successfully",
+		"data":    books,
+		"total":   totalCount,
+	})
+}
+
+// GetBookByID retrieves a single book by ID from the database
+func (r *Repository) GetBookByID(c *fiber.Ctx) error {
+	id := c.Params("id")
+	var book models.Book
+
+	if err := r.DB.First(&book, id).Error; err != nil {
+		if gorm.ErrRecordNotFound == err {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"error": "Book not found",
+			})
+		}
+		logrus.WithError(err).Error("Failed to fetch book")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to fetch book",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Book fetched successfully",
+		"data":    book,
+	})
+}
+
+// ErrorHandler is a custom error handler for Fiber
+func ErrorHandler(c *fiber.Ctx, err error) error {
+	logrus.WithError(err).Error("Internal server error")
+	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		"error": "Internal server error",
+	})
+}
+
+// Initialize routes for the API
 func (r *Repository) SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
-	api.Post("/create_books", r.CreateBooks)
-	api.Delete("delete_book/:id", r.DeleteBook)
+	api.Post("/create_books", r.CreateBook)
+	api.Delete("/delete_book/:id", r.DeleteBook)
 	api.Get("/get_books/:id", r.GetBookByID)
 	api.Get("/books", r.GetBooks)
 }
 
 func main() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatal(err)
+	// Load environment variables
+	if err := godotenv.Load(".env"); err != nil {
+		logrus.Fatalf("Error loading .env file: %v", err)
 	}
+
+	// Database configuration
 	config := &storage.Config{
 		Host:     os.Getenv("DB_HOST"),
 		Port:     os.Getenv("DB_PORT"),
-		Password: os.Getenv("DB_PASSWORD"),
 		User:     os.Getenv("DB_USER"),
-		SSLMode:  os.Getenv("DB_SSLMODE"),
+		Password: os.Getenv("DB_PASSWORD"),
 		DBName:   os.Getenv("DB_NAME"),
+		SSLMode:  os.Getenv("DB_SSLMODE"),
 	}
 
+	// Initialize database connection
 	db, err := storage.NewConnection(config)
-
 	if err != nil {
-		log.Fatal("could not load the database")
-	}
-	err = models.MigrateBooks(db)
-	if err != nil {
-		log.Fatal("could not migrate db")
+		logrus.Fatalf("Failed to connect to the database: %v", err)
 	}
 
-	r := Repository{
-		DB: db,
+	// Migrate database schema
+	if err := db.AutoMigrate(&models.Book{}); err != nil {
+		logrus.Fatalf("Failed to migrate database: %v", err)
 	}
-	app := fiber.New()
-	r.SetupRoutes(app)
-	app.Listen(":8080")
+
+	// Initialize repository and app
+	repo := Repository{DB: db}
+	app := fiber.New(fiber.Config{
+		ErrorHandler: ErrorHandler,
+	})
+
+	// Apply CORS middleware
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*", // Adjust as necessary
+		AllowMethods: "GET,POST,PUT,DELETE",
+	}))
+
+	// Setup routes
+	repo.SetupRoutes(app)
+
+	// Start the server
+	if err := app.Listen(":8080"); err != nil {
+		logrus.Fatalf("Failed to start server: %v", err)
+	}
 }
