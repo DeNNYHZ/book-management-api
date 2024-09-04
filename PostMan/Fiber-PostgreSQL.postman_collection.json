@@ -1,0 +1,106 @@
+{
+	"info": {
+		"_postman_id": "5b9addcd-b6c9-49de-a678-14c43f89e5fb",
+		"name": "Fiber-PostgreSQL",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37702958"
+	},
+	"item": [
+		{
+			"name": "Create Book",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n  {\r\n    \"author\": \"George Orwell\",\r\n    \"title\": \"1984\",\r\n    \"publisher\": \"Secker & Warburg\"\r\n  },\r\n  {\r\n    \"author\": \"J.K. Rowling\",\r\n    \"title\": \"Harry Potter and the Sorcerer's Stone\",\r\n    \"publisher\": \"Bloomsbury\"\r\n  },\r\n  {\r\n    \"author\": \"J.R.R. Tolkien\",\r\n    \"title\": \"The Hobbit\",\r\n    \"publisher\": \"George Allen & Unwin\"\r\n  },\r\n  {\r\n    \"author\": \"F. Scott Fitzgerald\",\r\n    \"title\": \"The Great Gatsby\",\r\n    \"publisher\": \"Charles Scribner's Sons\"\r\n  },\r\n  {\r\n    \"author\": \"Harper Lee\",\r\n    \"title\": \"To Kill a Mockingbird\",\r\n    \"publisher\": \"J.B. Lippincott & Co.\"\r\n  },\r\n  {\r\n    \"author\": \"Jane Austen\",\r\n    \"title\": \"Pride and Prejudice\",\r\n    \"publisher\": \"T. Egerton\"\r\n  },\r\n  {\r\n    \"author\": \"Mark Twain\",\r\n    \"title\": \"The Adventures of Tom Sawyer\",\r\n    \"publisher\": \"Chatto & Windus\"\r\n  },\r\n  {\r\n    \"author\": \"Herman Melville\",\r\n    \"title\": \"Moby-Dick\",\r\n    \"publisher\": \"Harper & Brothers\"\r\n  },\r\n  {\r\n    \"author\": \"Leo Tolstoy\",\r\n    \"title\": \"War and Peace\",\r\n    \"publisher\": \"The Russian Messenger\"\r\n  },\r\n  {\r\n    \"author\": \"Gabriel García Márquez\",\r\n    \"title\": \"One Hundred Years of Solitude\",\r\n    \"publisher\": \"Editorial Sudamericana\"\r\n  },\r\n  {\r\n    \"author\": \"J.D. Salinger\",\r\n    \"title\": \"The Catcher in the Rye\",\r\n    \"publisher\": \"Little, Brown and Company\"\r\n  },\r\n  {\r\n    \"author\": \"Aldous Huxley\",\r\n    \"title\": \"Brave New World\",\r\n    \"publisher\": \"Chatto & Windus\"\r\n  },\r\n  {\r\n    \"author\": \"J.D. Salinger\",\r\n    \"title\": \"Franny and Zooey\",\r\n    \"publisher\": \"Little, Brown and Company\"\r\n  },\r\n  {\r\n    \"author\": \"C.S. Lewis\",\r\n    \"title\": \"The Lion, the Witch and the Wardrobe\",\r\n    \"publisher\": \"Geoffrey Bles\"\r\n  },\r\n  {\r\n    \"author\": \"H.G. Wells\",\r\n    \"title\": \"The War of the Worlds\",\r\n    \"publisher\": \"William Heinemann\"\r\n  },\r\n  {\r\n    \"author\": \"George Orwell\",\r\n    \"title\": \"Animal Farm\",\r\n    \"publisher\": \"Secker & Warburg\"\r\n  },\r\n  {\r\n    \"author\": \"Stephen King\",\r\n    \"title\": \"The Shining\",\r\n    \"publisher\": \"Doubleday\"\r\n  },\r\n  {\r\n    \"author\": \"John Steinbeck\",\r\n    \"title\": \"Of Mice and Men\",\r\n    \"publisher\": \"Covici Friede\"\r\n  },\r\n  {\r\n    \"author\": \"Ernest Hemingway\",\r\n    \"title\": \"The Old Man and the Sea\",\r\n    \"publisher\": \"Charles Scribner's Sons\"\r\n  },\r\n  {\r\n    \"author\": \"F. Scott Fitzgerald\",\r\n    \"title\": \"Tender Is the Night\",\r\n    \"publisher\": \"Charles Scribner's Sons\"\r\n  },\r\n  {\r\n    \"author\": \"J.K. Rowling\",\r\n    \"title\": \"Harry Potter and the Chamber of Secrets\",\r\n    \"publisher\": \"Bloomsbury\"\r\n  },\r\n  {\r\n    \"author\": \"J.R.R. Tolkien\",\r\n    \"title\": \"The Fellowship of the Ring\",\r\n    \"publisher\": \"George Allen & Unwin\"\r\n  },\r\n  {\r\n    \"author\": \"J.R.R. Tolkien\",\r\n    \"title\": \"The Two Towers\",\r\n    \"publisher\": \"George Allen & Unwin\"\r\n  },\r\n  {\r\n    \"author\": \"J.R.R. Tolkien\",\r\n    \"title\": \"The Return of the King\",\r\n    \"publisher\": \"George Allen & Unwin\"\r\n  },\r\n  {\r\n    \"author\": \"Agatha Christie\",\r\n    \"title\": \"Murder on the Orient Express\",\r\n    \"publisher\": \"Collins Crime Club\"\r\n  },\r\n  {\r\n    \"author\": \"Dan Brown\",\r\n    \"title\": \"The Da Vinci Code\",\r\n    \"publisher\": \"Doubleday\"\r\n  },\r\n  {\r\n    \"author\": \"J.K. Rowling\",\r\n    \"title\": \"Harry Potter and the Prisoner of Azkaban\",\r\n    \"publisher\": \"Bloomsbury\"\r\n  },\r\n  {\r\n    \"author\": \"J.K. Rowling\",\r\n    \"title\": \"Harry Potter and the Goblet of Fire\",\r\n    \"publisher\": \"Bloomsbury\"\r\n  },\r\n  {\r\n    \"author\": \"J.K. Rowling\",\r\n    \"title\": \"Harry Potter and the Order of the Phoenix\",\r\n    \"publisher\": \"Bloomsbury\"\r\n  },\r\n  {\r\n    \"author\": \"J.K. Rowling\",\r\n    \"title\": \"Harry Potter and the Half-Blood Prince\",\r\n    \"publisher\": \"Bloomsbury\"\r\n  },\r\n  {\r\n    \"author\": \"J.K. Rowling\",\r\n    \"title\": \"Harry Potter and the Deathly Hallows\",\r\n    \"publisher\": \"Bloomsbury\"\r\n  },\r\n  {\r\n    \"author\": \"Tolkien\",\r\n    \"title\": \"The Silmarillion\",\r\n    \"publisher\": \"George Allen & Unwin\"\r\n  },\r\n  {\r\n    \"author\": \"Frank Herbert\",\r\n    \"title\": \"Dune\",\r\n    \"publisher\": \"Chilton Books\"\r\n  },\r\n  {\r\n    \"author\": \"Isaac Asimov\",\r\n    \"title\": \"Foundation\",\r\n    \"publisher\": \"Gnome Press\"\r\n  },\r\n  {\r\n    \"author\": \"Arthur C. Clarke\",\r\n    \"title\": \"2001: A Space Odyssey\",\r\n    \"publisher\": \"Harcourt Brace Jovanovich\"\r\n  },\r\n  {\r\n    \"author\": \"Philip K. Dick\",\r\n    \"title\": \"Do Androids Dream of Electric Sheep?\",\r\n    \"publisher\": \"Doubleday\"\r\n  },\r\n  {\r\n    \"author\": \"Margaret Atwood\",\r\n    \"title\": \"The Handmaid's Tale\",\r\n    \"publisher\": \"McClelland and Stewart\"\r\n  },\r\n  {\r\n    \"author\": \"J.R.R. Tolkien\",\r\n    \"title\": \"The Adventures of Tom Bombadil\",\r\n    \"publisher\": \"George Allen & Unwin\"\r\n  },\r\n  {\r\n    \"author\": \"J.K. Rowling\",\r\n    \"title\": \"Fantastic Beasts and Where to Find Them\",\r\n    \"publisher\": \"Bloomsbury\"\r\n  },\r\n  {\r\n    \"author\": \"C.S. Lewis\",\r\n    \"title\": \"The Chronicles of Narnia\",\r\n    \"publisher\": \"Geoffrey Bles\"\r\n  },\r\n  {\r\n    \"author\": \"George R.R. Martin\",\r\n    \"title\": \"A Game of Thrones\",\r\n    \"publisher\": \"Bantam Books\"\r\n  },\r\n  {\r\n    \"author\": \"George R.R. Martin\",\r\n    \"title\": \"A Clash of Kings\",\r\n    \"publisher\": \"Bantam Books\"\r\n  },\r\n  {\r\n    \"author\": \"George R.R. Martin\",\r\n    \"title\": \"A Storm of Swords\",\r\n    \"publisher\": \"Bantam Books\"\r\n  },\r\n  {\r\n    \"author\": \"George R.R. Martin\",\r\n    \"title\": \"A Feast for Crows\",\r\n    \"publisher\": \"Bantam Books\"\r\n  },\r\n  {\r\n    \"author\": \"George R.R. Martin\",\r\n    \"title\": \"A Dance with Dragons\",\r\n    \"publisher\": \"Bantam Books\"\r\n  },\r\n  {\r\n    \"author\": \"Stephen King\",\r\n    \"title\": \"It\",\r\n    \"publisher\": \"Viking\"\r\n  },\r\n  {\r\n    \"author\": \"Stephen King\",\r\n    \"title\": \"The Dark Tower\",\r\n    \"publisher\": \"Donald M. Grant Publisher\"\r\n  },\r\n  {\r\n    \"author\": \"J.D. Salinger\",\r\n    \"title\": \"Nine Stories\",\r\n    \"publisher\": \"Little, Brown and Company\"\r\n  },\r\n  {\r\n    \"author\": \"J.D. Salinger\",\r\n    \"title\": \"Raise High the Roof Beam, Carpenters and Seymour: An Introduction\",\r\n    \"publisher\": \"Little, Brown and Company\"\r\n  },\r\n  {\r\n    \"author\": \"Herman Melville\",\r\n    \"title\": \"Bartleby, the Scrivener\",\r\n    \"publisher\": \"Harper & Brothers\"\r\n  }\r\n]\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/create_books",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"create_books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET ALL BOOKS",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/books",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"books"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Book by ID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/delete_book/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"delete_book",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Book by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/get_books/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"get_books",
+						"5"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
