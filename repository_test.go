@@ -12,14 +12,17 @@ import (
 	"testing"
 )
 
-// Helper function to set up an in-memory SQLite database
+// Helper function to set up an database
 func setupTestDB() *gorm.DB {
 	dsn := "user=postgres password=admin dbname=fiber_demo port=5432 sslmode=disable"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
-	db.AutoMigrate(&models.Book{})
+	err = db.AutoMigrate(&models.Book{})
+	if err != nil {
+		return nil
+	}
 	return db
 }
 
